@@ -43,141 +43,132 @@ class _PriceTrackerPageState extends State<PriceTrackerPage> {
         ? Colors.greenAccent
         : Colors.orangeAccent;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Fluxa - Suivi de Prix"),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // --- SECTION GRAPHIQUE ---
-            const Text(
-              "Historique des variations",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            AspectRatio(
-              aspectRatio: 1.4,
-              child: LineChart(
-                LineChartData(
-                  lineTouchData: LineTouchData(
-                    touchTooltipData: LineTouchTooltipData(
-                      getTooltipColor: (spot) => Colors.deepPurple.withValues(alpha: 0.9),
-                    ),
-                  ),
-                  gridData: const FlGridData(show: true, drawVerticalLine: false),
-                  titlesData: FlTitlesData(
-                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 30,
-                        interval: 1,
-                        getTitlesWidget: (value, meta) {
-                          int index = value.toInt();
-                          if (index >= 0 && index < _data.length) {
-                            return SideTitleWidget(
-                              meta: meta, // On passe l'objet meta entier ici
-                              space: 8,   // L'espace entre le texte et l'axe
-                              child: Text(
-                                DateFormat('dd/MM').format(_data[index]["date"]),
-                                style: const TextStyle(fontSize: 10),
-                              ),
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-                    ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 45,
-                        getTitlesWidget: (value, meta) => Text("${value.toInt()}€"),
-                      ),
-                    ),
-                  ),
-                  borderData: FlBorderData(show: false),
-                  extraLinesData: ExtraLinesData(
-                    horizontalLines: [
-                      HorizontalLine(
-                        y: _targetPrice,
-                        color: targetColor,
-                        strokeWidth: 2,
-                        dashArray: [5, 5],
-                        label: HorizontalLineLabel(
-                          show: true,
-                          alignment: Alignment.topRight,
-                          labelResolver: (line) => 'Cible: ${line.y}€',
-                          style: TextStyle(color: targetColor, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: _data.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value["price"])).toList(),
-                      isCurved: true,
-                      color: Colors.deepPurple,
-                      barWidth: 4,
-                      dotData: const FlDotData(show: true),
-                      belowBarData: BarAreaData(
-                        show: true,
-                        color: Colors.deepPurple.withValues(alpha: 0.1),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 40),
-
-            // --- SECTION FORMULAIRE ---
-            Card(
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    const Text("Ajouter un relevé", style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _priceController,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                            decoration: const InputDecoration(
-                              labelText: "Nouveau prix",
-                              suffixText: "€",
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          onPressed: _addNewPrice,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                          ),
-                          child: const Icon(Icons.add_chart),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // --- SECTION GRAPHIQUE ---
+        const Text(
+          "Historique des variations",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
         ),
-      ),
+        const SizedBox(height: 20),
+        AspectRatio(
+          aspectRatio: 1.4,
+          child: LineChart(
+            LineChartData(
+              lineTouchData: LineTouchData(
+                touchTooltipData: LineTouchTooltipData(
+                  getTooltipColor: (spot) => Colors.deepPurple.withValues(alpha: 0.9),
+                ),
+              ),
+              gridData: const FlGridData(show: true, drawVerticalLine: false),
+              titlesData: FlTitlesData(
+                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 30,
+                    interval: 1,
+                    getTitlesWidget: (value, meta) {
+                      int index = value.toInt();
+                      if (index >= 0 && index < _data.length) {
+                        return SideTitleWidget(
+                          meta: meta, // On passe l'objet meta entier ici
+                          space: 8,   // L'espace entre le texte et l'axe
+                          child: Text(
+                            DateFormat('dd/MM').format(_data[index]["date"]),
+                            style: const TextStyle(fontSize: 10),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 45,
+                    getTitlesWidget: (value, meta) => Text("${value.toInt()}€"),
+                  ),
+                ),
+              ),
+              borderData: FlBorderData(show: false),
+              extraLinesData: ExtraLinesData(
+                horizontalLines: [
+                  HorizontalLine(
+                    y: _targetPrice,
+                    color: targetColor,
+                    strokeWidth: 2,
+                    dashArray: [5, 5],
+                    label: HorizontalLineLabel(
+                      show: true,
+                      alignment: Alignment.topRight,
+                      labelResolver: (line) => 'Cible: ${line.y}€',
+                      style: TextStyle(color: targetColor, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+              lineBarsData: [
+                LineChartBarData(
+                  spots: _data.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value["price"])).toList(),
+                  isCurved: true,
+                  color: Color(0xffff0000),
+                  barWidth: 4,
+                  dotData: const FlDotData(show: true),
+                  belowBarData: BarAreaData(
+                    show: true,
+                    color: Color(0xffff0000).withValues(alpha: 0.1),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 40),
+
+        // --- SECTION FORMULAIRE ---
+        Card(
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                const Text("Ajouter un relevé", style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _priceController,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        decoration: const InputDecoration(
+                          labelText: "Nouveau prix",
+                          suffixText: "€",
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: _addNewPrice,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                      ),
+                      child: const Icon(Icons.add_chart),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -54,20 +54,20 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/logos/fluxa_icon.png"
+  image_path: "assets/logos/app_icon.png"
   min_sdk_android: 21 # Doit être égal ou supérieur à votre minSdk
   adaptive_icon_background: "#ffffff" # Couleur de fond pour Android
-  adaptive_icon_foreground: "assets/logos/fluxa_icon.png" # Votre logo
+  adaptive_icon_foreground: "assets/logos/app_icon.png" # Votre logo
 
 flutter_native_splash:
-  color: "#111111" # Couleur de fond (ton Hexadécimal personnalisé)
-  image: assets/logos/fluxa_icon.png # Ton logo
+  color: "#ffffff" # Couleur de fond (ton Hexadécimal personnalisé)
+  image: assets/logos/app_icon.png # Ton logo
 
   # Pour Android 12+ (très important)
   android_12:
-    image: assets/logos/fluxa_icon.png
-    color: "#111111"
-    icon_background_color: "#111111"
+    image: assets/logos/app_icon.png
+    color: "#ffffff"
+    icon_background_color: "#ffffff"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

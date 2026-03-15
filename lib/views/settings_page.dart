@@ -20,17 +20,20 @@ class SettingsPage extends StatelessWidget {
         ),
         backgroundColor: Color(0xffffc90e),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.settings_outlined, size: 50,),
-            Text("Settings Page",
-              style: TextStyle(
-                  fontSize: 40
+      body: Container(
+        margin: EdgeInsets.all(10),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.settings_outlined, size: 50,),
+              Text("Settings Page",
+                style: TextStyle(
+                    fontSize: 40
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

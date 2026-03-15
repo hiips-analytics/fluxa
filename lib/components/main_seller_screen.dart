@@ -10,14 +10,14 @@ import '../views/followed_page.dart';
 import '../views/settings_page.dart';
 import '../views/profile_page.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class MainSellerScreen extends StatefulWidget {
+  const MainSellerScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<MainSellerScreen> createState() => _MainSellerScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainSellerScreenState extends State<MainSellerScreen> {
   // Le contrôleur pour gérer le changement d'onglets programmatiquement
   final PersistentTabController _controller = PersistentTabController(initialIndex: 0);
 
@@ -38,32 +38,32 @@ class _MainScreenState extends State<MainScreen> {
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.home_outlined),
         title: ("Accueil"),
-        activeColorPrimary: Colors.orange[800]!,
-        inactiveColorPrimary: Colors.white,
+        activeColorPrimary: Color(0xffffc900),
+        inactiveColorPrimary: Colors.black,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.search_outlined),
         title: ("Rechercher"),
-        activeColorPrimary: Colors.orange[800]!,
-        inactiveColorPrimary: Colors.white,
+        activeColorPrimary: Colors.blue,
+        inactiveColorPrimary: Colors.black,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.shopping_cart_outlined),
         title: ("Suivis"),
-        activeColorPrimary: Colors.orange[800]!,
-        inactiveColorPrimary: Colors.white,
+        activeColorPrimary: Colors.red,
+        inactiveColorPrimary: Colors.black,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.notifications_active_outlined),
         title: ("Notifications"),
-        activeColorPrimary: Colors.orange[800]!,
-        inactiveColorPrimary: Colors.white,
+        activeColorPrimary: Colors.teal,
+        inactiveColorPrimary: Colors.black,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.person_outline),
         title: ("Profil"),
-        activeColorPrimary: Colors.orange[800]!,
-        inactiveColorPrimary: Colors.white,
+        activeColorPrimary: Colors.green,
+        inactiveColorPrimary: Colors.black,
       ),
     ];
 
@@ -76,21 +76,21 @@ class _MainScreenState extends State<MainScreen> {
       controller: _controller,
       screens: _buildScreens(),
       items: _navBarsItems(),
-      backgroundColor: Color(0xFFFFC90E),
+      backgroundColor: Colors.white,
       handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset: true,
       stateManagement: true,
       hideNavigationBarWhenKeyboardAppears: true,
       decoration: NavBarDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        colorBehindNavBar: Color(0xFFFFC90E),
+        colorBehindNavBar: Colors.white,
         boxShadow: [
           const BoxShadow(color: Colors.black12, blurRadius: 10),
         ],
       ),
 
       // LA LIGNE CLÉ :
-      navBarStyle: NavBarStyle.style19, // C'est ici que vous activez le style voulu
+      navBarStyle: NavBarStyle.style9, // C'est ici que vous activez le style voulu
     );
   }
 }

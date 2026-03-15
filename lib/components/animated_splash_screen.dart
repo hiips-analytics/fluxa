@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 // Components imports
-import 'package:fluxa/components/main_screen.dart';
+import 'package:fluxa/views/login_page.dart';
 
 class AnimateSplashScreen extends StatefulWidget {
   const AnimateSplashScreen({super.key});
@@ -27,13 +27,14 @@ class _AnimateSplashScreenState extends State<AnimateSplashScreen> {
       });
     });
 
-    Future.delayed(const Duration(seconds: 10), () {
-      // Une fois l'animation finie, on va vers l'écran de navigation
+    Future.delayed(const Duration(seconds: 4), () {
+      // Une fois l'animation finie, on va vers l'écran de connexion
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, a, sa) => const MainScreen(),
-          transitionsBuilder: (context, a, sa, child) => FadeTransition(opacity: a, child: child),
+          pageBuilder: (context, a, sa) => const LoginPage(),
+          transitionsBuilder: (context, a, sa, child) =>
+              FadeTransition(opacity: a, child: child),
         ),
       );
     });
@@ -54,19 +55,20 @@ class _AnimateSplashScreenState extends State<AnimateSplashScreen> {
                 duration: const Duration(milliseconds: 800),
                 scale: _scale,
                 curve: Curves.easeOutBack,
-                child: Image.asset("assets/logos/fluxa_icon.png", width: 200),
+                child: Image.asset("assets/logos/app_icon.png", width: 200),
               ),
             ),
-            Text("Fluxa Market",
+            const Text(
+              "Fluxa Market",
               style: TextStyle(
                 fontSize: 30,
                 fontStyle: FontStyle.italic,
                 color: Color(0xffffc90e),
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             AnimatedOpacity(
-              opacity: _opacity, // Elle apparaîtra en même temps que le logo
+              opacity: _opacity,
               duration: const Duration(milliseconds: 2000),
               child: SizedBox(
                 width: 150,
