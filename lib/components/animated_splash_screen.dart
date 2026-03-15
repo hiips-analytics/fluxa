@@ -66,7 +66,7 @@ class _AnimateSplashScreenState extends State<AnimateSplashScreen> {
               ),
             ),
             const Text(
-              "Fluxa Market",
+              "Fluxa",
               style: TextStyle(
                 fontSize: 30,
                 fontStyle: FontStyle.italic,

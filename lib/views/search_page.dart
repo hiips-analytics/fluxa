@@ -180,7 +180,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget _buildCategoryFilters() {
     return Container(
       height: 60,
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -200,7 +200,7 @@ class _SearchPageState extends State<SearchPage> {
                 color: isSelected ? Colors.white : Colors.black87,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
-              elevation: isSelected ? 4 : 0,
+              elevation: isSelected ? 2 : 0,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
