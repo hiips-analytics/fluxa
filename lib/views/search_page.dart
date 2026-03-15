@@ -20,7 +20,9 @@ class _SearchPageState extends State<SearchPage> {
     "Alimentation",
     "Électronique",
     "Mode",
-    "Maison"
+    "Maison",
+    "Santé",
+    "Agriculture"
   ];
 
   @override

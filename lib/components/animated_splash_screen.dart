@@ -12,14 +12,14 @@ class AnimateSplashScreen extends StatefulWidget {
 }
 
 class _AnimateSplashScreenState extends State<AnimateSplashScreen> {
-  double _opacity = 0.0;
-  double _scale = 0.8;
+  double _opacity = 1.0;
+  double _scale = 0.7;
 
   @override
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 200), () {
       FlutterNativeSplash.remove(); // On enlève le splash natif figé
       setState(() {
         _opacity = 1.0;
@@ -27,7 +27,7 @@ class _AnimateSplashScreenState extends State<AnimateSplashScreen> {
       });
     });
 
-    Future.delayed(const Duration(seconds: 4), () {
+    Future.delayed(const Duration(seconds: 3), () {
       // Une fois l'animation finie, on va vers l'écran de connexion
       Navigator.pushReplacement(
         context,
@@ -49,13 +49,20 @@ class _AnimateSplashScreenState extends State<AnimateSplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedOpacity(
-              duration: const Duration(milliseconds: 800),
+              duration: const Duration(milliseconds: 700),
               opacity: _opacity,
               child: AnimatedScale(
-                duration: const Duration(milliseconds: 800),
+                duration: const Duration(milliseconds: 700),
                 scale: _scale,
                 curve: Curves.easeOutBack,
-                child: Image.asset("assets/logos/app_icon.png", width: 200),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFC90E).withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Image.asset("assets/logos/app_icon.png", width: 200),
+                ),
               ),
             ),
             const Text(
@@ -63,7 +70,8 @@ class _AnimateSplashScreenState extends State<AnimateSplashScreen> {
               style: TextStyle(
                 fontSize: 30,
                 fontStyle: FontStyle.italic,
-                color: Color(0xffffc90e),
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFFFC90E),
               ),
             ),
             const SizedBox(height: 30),
@@ -74,11 +82,42 @@ class _AnimateSplashScreenState extends State<AnimateSplashScreen> {
                 width: 150,
                 child: LinearProgressIndicator(
                   backgroundColor: Colors.grey[200],
-                  color: const Color(0xffffc90e),
+                  color: const Color(0xFFFFC90E),
                   minHeight: 4,
                 ),
               ),
-            )
+            ),
+            const SizedBox(height: 75),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Développé par ",
+                    style: TextStyle(
+                      fontSize: 15,
+                      // fontStyle: FontStyle.italic,
+                      color: Color(0xffffc90e),
+                    ),
+                  ),
+                  const Text(
+                    "DevMobil-15",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontStyle: FontStyle.italic,
+                      color: Color(0xffffc90e),
+                    ),
+                  )
+                ]
+            ),
+            const SizedBox(height: 5),
+            const Text(
+              "IUT de NGAOUNDERE | Mars 2026",
+              style: TextStyle(
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+                color: Color(0xffffc90e),
+              ),
+            ),
           ],
         ),
       ),

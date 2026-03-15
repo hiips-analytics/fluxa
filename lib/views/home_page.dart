@@ -225,6 +225,8 @@ class HomePage extends StatelessWidget {
       {"name": "Electro", "icon": Icons.devices, "color": Colors.purple},
       {"name": "Mode", "icon": Icons.checkroom, "color": Colors.pink},
       {"name": "Maison", "icon": Icons.home, "color": Colors.teal},
+      {"name": "Santé", "icon": Icons.local_hospital, "color": Colors.red},
+      {"name": "Agriculture", "icon": Icons.agriculture, "color": Colors.green}
     ];
     return SizedBox(
       height: 90,
