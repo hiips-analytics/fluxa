@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-
+import '../services/auth_service.dart';
 import './settings_page.dart';
 import './login_page.dart';
 
@@ -9,6 +9,8 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthService authService = AuthService();
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -35,7 +37,7 @@ class ProfilePage extends StatelessWidget {
               child: Column(
                 children: [
                   _buildSavingsDashboard(),
-                  _buildProfileMenu(context),
+                  _buildProfileMenu(context, authService),
                 ],
               ),
             ),
@@ -157,7 +159,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileMenu(BuildContext context) {
+  Widget _buildProfileMenu(BuildContext context, AuthService authService) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -175,16 +177,23 @@ class ProfilePage extends StatelessWidget {
           _buildMenuItem(context, Icons.history, "Historique des prix consultés"),
           _buildMenuItem(context, Icons.share, "Inviter des amis"),
           _buildMenuItem(context, Icons.help_outline, "Aide & Support"),
-          // _buildMenuItem(context, Icons.person_add_alt, "Ajouter un profil"),
+          _buildMenuItem(context, Icons.person_add_alt, "Ajouter un profil"),
           _buildMenuItem(context, Icons.logout, "Déconnexion",
-              isLast: true, destinationPage: const LoginPage()),
+              isLast: true,
+              onTap: () async {
+                await authService.signOut();
+                if (context.mounted) {
+                  Navigator.of(context, rootNavigator: true).pushReplacement(
+                      MaterialPageRoute(builder: (context) => const LoginPage()));
+                }
+              }),
         ],
       ),
     );
   }
 
   Widget _buildMenuItem(BuildContext context, IconData icon, String title,
-      {Widget? destinationPage, bool isLast = false}) {
+      {VoidCallback? onTap, bool isLast = false}) {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
@@ -200,13 +209,7 @@ class ProfilePage extends StatelessWidget {
               fontSize: 14,
               fontWeight: FontWeight.w500)),
       trailing: const Icon(Icons.chevron_right, size: 18, color: Colors.grey),
-      onTap: () {
-        if (destinationPage != null) {
-          // Utilisation du rootNavigator pour sortir du PersistentBottomNavBar
-          Navigator.of(context, rootNavigator: true).pushReplacement(
-              MaterialPageRoute(builder: (context) => destinationPage));
-        }
-      },
+      onTap: onTap,
     );
   }
 }

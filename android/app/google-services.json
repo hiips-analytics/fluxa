@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "786015383236",
+    "project_id": "fluxa-f30c6",
+    "storage_bucket": "fluxa-f30c6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786015383236:android:7d08c6d683f00f035c6391",
+        "android_client_info": {
+          "package_name": "cm.fluxa.fluxa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJb_FKgQVNr6ZclZv5UkWNtQ09FsWUHBE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

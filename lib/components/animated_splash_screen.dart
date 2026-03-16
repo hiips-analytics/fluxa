@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-
-// Components imports
-import 'package:fluxa/views/login_page.dart';
+import '../services/auth_service.dart';
+import '../models/user_model.dart';
+import '../views/login_page.dart';
+import 'main_screen.dart';
+import 'merchant_main_screen.dart';
 
 class AnimateSplashScreen extends StatefulWidget {
   const AnimateSplashScreen({super.key});
@@ -14,30 +17,62 @@ class AnimateSplashScreen extends StatefulWidget {
 class _AnimateSplashScreenState extends State<AnimateSplashScreen> {
   double _opacity = 1.0;
   double _scale = 0.7;
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
     super.initState();
 
     Future.delayed(const Duration(milliseconds: 200), () {
-      FlutterNativeSplash.remove(); // On enlève le splash natif figé
+      FlutterNativeSplash.remove();
       setState(() {
         _opacity = 1.0;
         _scale = 1.0;
       });
     });
 
-    Future.delayed(const Duration(seconds: 3), () {
-      // Une fois l'animation finie, on va vers l'écran de connexion
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, a, sa) => const LoginPage(),
-          transitionsBuilder: (context, a, sa, child) =>
-              FadeTransition(opacity: a, child: child),
-        ),
-      );
-    });
+    _checkAuthAndNavigate();
+  }
+
+  void _checkAuthAndNavigate() async {
+    // On attend la fin de l'animation (3 secondes au total)
+    await Future.delayed(const Duration(seconds: 3));
+
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // Utilisateur déjà connecté, on récupère son type
+      UserModel? profile = await _authService.getCurrentUserModel();
+      
+      if (mounted) {
+        if (profile != null) {
+          if (profile.userType == 'Commerçant') {
+            _navigateTo(const MerchantMainScreen());
+          } else {
+            _navigateTo(const MainScreen());
+          }
+        } else {
+          // Erreur profil, par sécurité retour login
+          _navigateTo(const LoginPage());
+        }
+      }
+    } else {
+      // Personne n'est connecté
+      if (mounted) {
+        _navigateTo(const LoginPage());
+      }
+    }
+  }
+
+  void _navigateTo(Widget page) {
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, a, sa) => page,
+        transitionsBuilder: (context, a, sa, child) =>
+            FadeTransition(opacity: a, child: child),
+      ),
+    );
   }
 
   @override
@@ -52,7 +87,7 @@ class _AnimateSplashScreenState extends State<AnimateSplashScreen> {
               duration: const Duration(milliseconds: 700),
               opacity: _opacity,
               child: AnimatedScale(
-                duration: const Duration(milliseconds: 700),
+                duration: const Duration(milliseconds: 800),
                 scale: _scale,
                 curve: Curves.easeOutBack,
                 child: Container(
@@ -88,27 +123,23 @@ class _AnimateSplashScreenState extends State<AnimateSplashScreen> {
               ),
             ),
             const SizedBox(height: 75),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Développé par ",
-                    style: TextStyle(
-                      fontSize: 15,
-                      // fontStyle: FontStyle.italic,
-                      color: Color(0xffffc90e),
-                    ),
-                  ),
-                  const Text(
-                    "DevMobil-15",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontStyle: FontStyle.italic,
-                      color: Color(0xffffc90e),
-                    ),
-                  )
-                ]
-            ),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
+              Text(
+                "Développé par ",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Color(0xffffc90e),
+                ),
+              ),
+              Text(
+                "DevMobil-15",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontStyle: FontStyle.italic,
+                  color: Color(0xffffc90e),
+                ),
+              )
+            ]),
             const SizedBox(height: 5),
             const Text(
               "IUT de NGAOUNDERE | Mars 2026",

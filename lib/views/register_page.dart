@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/auth_service.dart';
 import '../components/main_screen.dart';
+import '../components/merchant_main_screen.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -9,8 +12,84 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+
   String _userType = 'Client';
   bool _obscurePassword = true;
+  bool _isLoading = false;
+
+  void _handleSignUp() async {
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+      _showErrorSnackBar("Veuillez remplir tous les champs");
+      return;
+    }
+
+    if (password.length < 6) {
+      _showErrorSnackBar("Le mot de passe doit faire au moins 6 caractères");
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final user = await _authService.signUp(name, email, password, _userType);
+
+      setState(() => _isLoading = false);
+
+      if (user != null) {
+        if (mounted) {
+          if (_userType == 'Commerçant') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const MerchantMainScreen()),
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const MainScreen()),
+            );
+          }
+        }
+      } else {
+        _showErrorSnackBar(
+            "Une erreur inconnue est survenue lors de l'enregistrement Firestore.");
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() => _isLoading = false);
+      String message = "Échec de l'inscription";
+      if (e.code == 'email-already-in-use') {
+        message = "Cet email est déjà utilisé par un autre compte.";
+      } else if (e.code == 'invalid-email') {
+        message = "L'adresse email n'est pas valide.";
+      } else if (e.code == 'weak-password') {
+        message = "Le mot de passe est trop faible.";
+      }
+      _showErrorSnackBar(message);
+    } catch (e) {
+      setState(() => _isLoading = false);
+      _showErrorSnackBar("Erreur: ${e.toString()}");
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +106,13 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // --- Logo ---
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFC90E).withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Image.asset("assets/logos/app_icon.png", width: 150),
+                child: Image.asset("assets/logos/app_icon.png", width: 120),
               ),
               const SizedBox(height: 20),
               const Text(
@@ -51,8 +129,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
-
-              // --- Type de compte ---
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Text("Vous êtes ?",
@@ -67,38 +143,34 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
               const SizedBox(height: 30),
-
-              // --- Formulaire ---
-              _buildTextField("Nom complet", Icons.person_outline),
+              _buildTextField("Nom complet", Icons.person_outline,
+                  controller: _nameController),
               const SizedBox(height: 20),
-              _buildTextField("Email", Icons.email_outlined),
+              _buildTextField("Email", Icons.email_outlined,
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress),
               const SizedBox(height: 20),
               _buildTextField("Mot de passe", Icons.lock_outline,
-                  isPassword: true),
+                  isPassword: true, controller: _passwordController),
               const SizedBox(height: 40),
-
-              // --- Bouton Inscription ---
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const MainScreen()));
-                  },
+                  onPressed: _isLoading ? null : _handleSignUp,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFFC90E),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
                     elevation: 0,
                   ),
-                  child: const Text("Créer mon compte",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text("Créer mon compte",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(height: 30),
@@ -139,9 +211,13 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget _buildTextField(String label, IconData icon,
-      {bool isPassword = false}) {
+      {bool isPassword = false,
+      required TextEditingController controller,
+      TextInputType keyboardType = TextInputType.text}) {
     return TextField(
+      controller: controller,
       obscureText: isPassword ? _obscurePassword : false,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: Colors.grey),

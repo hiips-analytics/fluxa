@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
+import '../models/user_model.dart';
 import 'register_page.dart';
 import '../components/main_screen.dart';
+import '../components/merchant_main_screen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,7 +15,54 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
   bool _obscurePassword = true;
+  bool _isLoading = false;
+
+  void _handleSignIn() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Veuillez remplir tous les champs")),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    final user = await _authService.signIn(email, password);
+
+    if (user != null) {
+      // Récupérer le profil pour savoir où rediriger
+      UserModel? userProfile = await _authService.getCurrentUserModel();
+      
+      setState(() => _isLoading = false);
+
+      if (userProfile != null && mounted) {
+        if (userProfile.userType == 'Commerçant') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MerchantMainScreen()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainScreen()),
+          );
+        }
+      }
+    } else {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text("Échec de la connexion. Vérifiez vos identifiants")),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +74,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 190),
-              // --- Logo ---
+              const SizedBox(height: 60),
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -47,10 +96,9 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(color: Colors.grey, fontSize: 16),
               ),
               const SizedBox(height: 50),
-
-              // --- Formulaire ---
               TextField(
                 controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: "Email",
                   labelStyle: const TextStyle(color: Colors.grey),
@@ -104,34 +152,27 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // --- Bouton Connexion ---
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const MainScreen()));
-                  },
+                  onPressed: _isLoading ? null : _handleSignIn,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFFC90E),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
                     elevation: 0,
                   ),
-                  child: const Text("Se connecter",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text("Se connecter",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(height: 20),
-
-              // --- Inscription ---
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -150,10 +191,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 50),
-
-              // --- Footer ---
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
